@@ -1,13 +1,16 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import Dict, List, Optional
+from pydantic import BaseModel, Field
 
 class SceneMetricsModel(BaseModel):
     scene_number: int
     slugline: str
-    vector_coordinates: Dict[str, float]
+    vector_coordinates: Dict[str, float] = Field(default_factory=dict)
+    variance_score: float = 0.0
 
 class ScriptAnalysisResponseModel(BaseModel):
-    structural_summary: Dict[str, Any]
-    tonal_drift_report: List[Dict[str, Any]]
-    scene_count: int
+    total_scenes: int
     scenes: List[SceneMetricsModel]
+    high_variance_transitions: List[int] = Field(default_factory=list)
+    structural_summary: Optional[Dict[str, float]] = None
+
