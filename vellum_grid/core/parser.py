@@ -1,3 +1,33 @@
+import re
+from typing import List, Dict, Any
+
+class ScriptParser:
+    """Core parser for segmenting unstructured script text into structured scene blocks."""
+    
+    SLUG_PATTERN = re.compile(
+        r'^\s*(INT\.|EXT\.|INT\./EXT\.|I/E)\s+(.+?)(?:\s*-\s*(?:DAY|NIGHT|CONTINUOUS|MORNING|EVENING|LATER))?\s*$',
+        re.IGNORECASE | re.MULTILINE
+    )
+
+    @classmethod
+    def parse_script(cls, script_text: str) -> List[Dict[str, Any]]:
+        scenes = []
+        matches = list(cls.SLUG_PATTERN.finditer(script_text))
+        
+        for i, match in enumerate(matches):
+            start_idx = match.start()
+            end_idx = matches[i + 1].start() if i + 1 < len(matches) else len(script_text)
+            
+            slugline = match.group(0).strip()
+            scene_body = script_text[match.end():end_idx].strip()
+            
+            scenes.append({
+                "scene_number": i + 1,
+                "slugline": slugline,
+                "content": scene_body
+            })
+            
+        return scenes
 # vellum_grid/core/parser.py
 import re
 from typing import List, Dict, Any
