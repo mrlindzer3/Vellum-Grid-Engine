@@ -1,3 +1,16 @@
+from fastapi import APIRouter, HTTPException
+from typing import Dict, Any
+from vellum_grid.core.nexus import AbsoluteNexus
+
+router = APIRouter(prefix="/api/v1", tags=["Luxury Poetics"])
+
+@router.get("/absolute-nexus/{entity_name}/{mantle}")
+def get_absolute_nexus(entity_name: str, mantle: str) -> Dict[str, Any]:
+    """Exposes the absolute luxury nexus, enforcing uncompromising nomenclature and decadence metrics."""
+    try:
+        return AbsoluteNexus.synthesize_absolute_state(entity_name, mantle)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 from fastapi import APIRouter, HTTPException, Body
 from vellum_grid.core.parser import ScriptParser
 from vellum_grid.core.mapper import LexiconMapper
