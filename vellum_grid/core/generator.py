@@ -6,11 +6,13 @@ class VellumGridEngine:
         self.matrix = LEXICON_MATRIX
 
     def _check_cadence(self, name: str) -> bool:
+        """Ensures phonetic balance (2 to 6 vowel sounds per compound name)."""
         vowels = "aeiouy"
         syllables = sum(1 for char in name.lower() if char in vowels)
         return 2 <= syllables <= 6
 
     def generate_element(self, category: str = None) -> dict:
+        """Pulls a structured nomenclature pairing along with its sub-elements."""
         if not category or category not in self.matrix:
             category = random.choice(list(self.matrix.keys()))
             
@@ -26,6 +28,7 @@ class VellumGridEngine:
         }
 
     def generate_tracklist(self, category: str, count: int = 5) -> list:
+        """Generates a sequentially balanced set of names for albums or game chapters."""
         elements_dict = self.matrix[category]["elements"]
         keys = list(elements_dict.keys())
         selected = random.sample(keys, min(count, len(keys)))
