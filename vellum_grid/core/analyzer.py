@@ -1,3 +1,66 @@
+import math
+from typing import Dict, List, Any
+
+class NarrativeAnalyzer:
+    """Calculates vector variances, structural summaries, and high-variance transition points across scenes."""
+
+    @staticmethod
+    def euclidean_distance(v1: Dict[str, float], v2: Dict[str, float]) -> float:
+        """Computes Euclidean distance between two semantic vector dictionaries."""
+        common_keys = set(v1.keys()).intersection(set(v2.keys()))
+        if not common_keys:
+            return 0.0
+        sum_sq = sum((v1[k] - v2[k]) ** 2 for k in common_keys)
+        return round(math.sqrt(sum_sq), 4)
+
+    @classmethod
+    def analyze_script(cls, mapped_scenes: List[Dict[str, Any]]) -> Dict[str, Any]:
+        if not mapped_scenes:
+            return {
+                "total_scenes": 0,
+                "scenes": [],
+                "high_variance_transitions": [],
+                "structural_summary": {}
+            }
+
+        analyzed_scenes = []
+        transitions = []
+        vector_magnitudes = []
+
+        for i, scene in enumerate(mapped_scenes):
+            current_vector = scene["vector_coordinates"]
+            
+            # Compute magnitude (Euclidean norm from origin) as a baseline metric
+            mag = round(math.sqrt(sum(v ** 2 for v in current_vector.values())), 4)
+            vector_magnitudes.append(mag)
+
+            variance_score = 0.0
+            if i > 0:
+                prev_vector = mapped_scenes[i - 1]["vector_coordinates"]
+                variance_score = cls.euclidean_distance(prev_vector, current_vector)
+                
+                # Flag high-variance transitions (threshold set dynamically based on typical distribution)
+                if variance_score > 15.0:
+                    transitions.append(scene["scene_number"])
+
+            updated_scene = scene.copy()
+            updated_scene["variance_score"] = variance_score
+            analyzed_scenes.append(updated_scene)
+
+        avg_magnitude = sum(vector_magnitudes) / len(vector_magnitudes) if vector_magnitudes else 0.0
+
+        structural_summary = {
+            "mean_vector_magnitude": round(avg_magnitude, 4),
+            "max_variance_jump": max((s["variance_score"] for s in analyzed_scenes), default=0.0),
+            "pacing_index": round(sum(s["variance_score"] for s in analyzed_scenes) / len(analyzed_scenes), 4)
+        }
+
+        return {
+            "total_scenes": len(analyzed_scenes),
+            "scenes": analyzed_scenes,
+            "high_variance_transitions": transitions,
+            "structural_summary": structural_summary
+        }
 # vellum_grid/core/analyzer.py
 from typing import List, Dict, Any
 from vellum_grid.core.parser import SceneBlock
