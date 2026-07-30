@@ -1,5 +1,4 @@
-# Vellum-Grid-Engine
-A programmatic world-building and creative direction engine designed to generate systemic nomenclature, thematic lore, and narrative progression frameworks for games, cinema, literature, and musical projects.
+
 # Vellum Grid Engine
 
 The Vellum Grid Engine is a service-oriented narrative matrix and script analysis platform designed for writers, directors, and producers. It bridges raw script text and the 100-element lexicon matrix, offering programmatic scene parsing, tonal drift detection, and automated structural evaluation.
