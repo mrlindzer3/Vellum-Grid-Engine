@@ -1,0 +1,48 @@
+# vellum_grid/api/main.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Dict, Any
+from vellum_grid.core.parser import ScriptParser
+from vellum_grid.core.mapper import MatrixMapper
+from vellum_grid.core.analyzer import MatrixAnalyzer
+
+app = FastAPI(
+    title="Vellum Grid Engine API",
+    description="Service-oriented narrative matrix and script analysis engine for writers, directors, and producers.",
+    version="1.0.0"
+)
+
+class ScriptPayload(BaseModel):
+    raw_script: str
+    lexicon_matrix: Dict[str, List[float]]
+
+@app.post("/analyze", response_model=Dict[str, Any])
+def analyze_script(payload: ScriptPayload):
+    try:
+        # Step 1: Parse raw script into structured scene blocks
+        parser = ScriptParser(payload.raw_script)
+        scenes = parser.parse_scenes()
+        
+        if not scenes:
+            raise HTTPException(status_code=400, detail="No valid scenes or sluglines found in the provided script.")
+
+        # Step 2: Map scenes to the 100-element lexicon matrix
+        mapper = MatrixMapper(payload.lexicon_matrix)
+        mapped_scenes = mapper.map_entire_script(scenes)
+
+        # Step 3: Analyze structural variance and tonal drift
+        analyzer = MatrixAnalyzer(mapped_scenes)
+        summary = analyzer.generate_structural_summary()
+        drift_report = analyzer.calculate_tonal_drift()
+
+        return {
+            "structural_summary": summary,
+            "tonal_drift_report": drift_report,
+            "scene_count": len(mapped_scenes)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+def health_check():
+    return {"status": "operational", "engine": "Vellum Grid Engine"}
