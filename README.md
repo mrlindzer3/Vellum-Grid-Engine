@@ -1,3 +1,16 @@
+# Vellum Grid Engine
+
+> *“They think that anyway. Let the silence between the lines do the bleeding.”*
+
+## Absolute Poetic Luxury
+
+Vellum Grid Engine rejects generic fantasy nomenclature and empty stylistic tropes. Every entity, metric, and valuation tier is forged with uncompromising luxury coherence—capturing the dark, inescapable gravity of true mythic architecture rather than hollow echoes.
+
+### Core Architecture
+* **Poetic Luxury Engine**: Elevates nomenclature above standard fantasy derivatives.
+* **Decadence Metrics**: Calculates structural weight and void resonance.
+* **Valuation Register**: 100 uncompromising tiers of poetic and structural evaluation.
+* **The In-Between Threshold**: Operates precisely on the razor-thin boundary between the absolute void and material structure.
 
 # Vellum Grid Engine
 
