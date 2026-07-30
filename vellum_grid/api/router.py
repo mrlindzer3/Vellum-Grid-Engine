@@ -1,3 +1,25 @@
+from fastapi import APIRouter, HTTPException, Body
+from vellum_grid.core.parser import ScriptParser
+from vellum_grid.core.mapper import LexiconMapper
+from vellum_grid.core.analyzer import NarrativeAnalyzer
+from vellum_grid.schemas.models import ScriptAnalysisResponseModel
+
+router = APIRouter(prefix="/api/v1", tags=["Analysis"])
+
+@router.post("/analyze", response_model=ScriptAnalysisResponseModel)
+def analyze_script_endpoint(script_text: str = Body(..., media_type="text/plain")):
+    """Parses raw script text, maps scenes against the lexicon matrix, and runs full narrative analysis."""
+    if not script_text.strip():
+        raise HTTPException(status_code=400, detail="Script text payload cannot be empty.")
+    
+    parsed_scenes = ScriptParser.parse_script(script_text)
+    if not parsed_scenes:
+        raise HTTPException(status_code=422, detail="No valid scenes or sluglines detected in script text.")
+    
+    mapped_scenes = LexiconMapper.map_scenes(parsed_scenes)
+    analysis_results = NarrativeAnalyzer.analyze_script(mapped_scenes)
+    
+    return analysis_results
 from fastapi import APIRouter, HTTPException
 from typing import Dict, Any
 from vellum_grid.api.main import ScriptPayload
